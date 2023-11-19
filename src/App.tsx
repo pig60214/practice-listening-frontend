@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import apis from './apis';
+import { Link } from "react-router-dom";
 import ITranscription from './models/transcription';
 
 function App() {
@@ -14,7 +15,7 @@ function App() {
 
   return (
     <ul>
-      { transcriptions.map(t => <li>{ t.title }</li>) }
+      { transcriptions.map(t => <li key={t.id}><Link to={`transcription/${t.id}`}>{t.title}</Link></li>) }
     </ul>
   );
 }

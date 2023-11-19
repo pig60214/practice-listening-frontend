@@ -11,8 +11,12 @@ const api = axios.create({
 
 const apis = {
   async getTranscriptions(): Promise<ApiResponse<ITranscription[]>> {
-    const a = (await api.get('/transcription/get-all', {})).data;
-    return a;
+    const result = (await api.get('/transcription/get-list')).data;
+    return result;
+  },
+  async getTranscription(id: number): Promise<ApiResponse<ITranscription>> {
+    const result = (await api.get(`/transcription/${id}`)).data;
+    return result;
   },
 };
 
