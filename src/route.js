@@ -7,7 +7,7 @@ const router = createBrowserRouter([
     path: "/",
     element: <App />,
   }, {
-    path: "/transcription/:id",
+    path: "/transcription/:transcriptionId",
     element: <Transcription />,
   }
 ]);
