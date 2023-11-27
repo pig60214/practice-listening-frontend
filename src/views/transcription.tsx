@@ -43,7 +43,11 @@ function Transcription() {
       }
     };
     document.addEventListener('mouseup', saveSelection);
-    return () => document.removeEventListener('mouseup', saveSelection);
+    document.addEventListener('touchend', saveSelection);
+    return () => {
+      document.removeEventListener('mouseup', saveSelection);
+      document.removeEventListener('touchend', saveSelection);
+    }
   }, []);
 
   const [saving, setSaving] = useState(false);
