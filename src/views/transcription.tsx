@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import ITranscription from "../models/transcription";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import apis from "../apis";
 import IWord from "../models/word";
 import parse from 'html-react-parser';
@@ -10,8 +10,8 @@ function Transcription() {
   const { transcriptionId = '0' } = useParams();
   const [transcription, setTranscription] = useState<ITranscription>({title: "We can't find this article"} as ITranscription);
   const [vocabulary, setVocabulary] = useState<IWord[]>([]);
-  const [highlightedText, setHighlightedText] = useState<string>('');
   const [content, setContent] = useState<string>('');
+  const highlightedText = useRef<string>('');
 
   useEffect(() => {
     const getTranscriptionAndVocabulary = async () => {
@@ -39,7 +39,7 @@ function Transcription() {
     const saveSelection = () => {
       const selection = window.getSelection()?.toString();
       if (selection) {
-        setHighlightedText(selection);
+        highlightedText.current = selection;
       }
     };
     document.addEventListener('mouseup', saveSelection);
@@ -51,16 +51,27 @@ function Transcription() {
   }, []);
 
   const [saving, setSaving] = useState(false);
-  const saveButton = async () => {
+  const saveButton = useCallback(async () => {
+    if(highlightedText.current === '') return;
     setSaving(true);
     const word: IWord = {
       id: 0,
       transcriptionId: Number(transcriptionId),
-      word: highlightedText,
+      word: highlightedText.current,
     }
     await apis.addWord(word);
     setSaving(false);
-  };
+  }, [setSaving, transcriptionId, highlightedText]);
+
+  useEffect(() => {
+    const enterEvent = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        saveButton();
+      }
+    }
+    document.body.addEventListener('keydown', enterEvent)
+    return () => document.removeEventListener('keydown', enterEvent);
+  }, [saveButton]);
 
   return (
     <div>
