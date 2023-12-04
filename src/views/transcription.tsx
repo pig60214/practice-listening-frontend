@@ -17,7 +17,7 @@ function Transcription() {
   const getVocabulary = useCallback(async () => {
     const v = (await apis.getVocabularyByTranscriptionId(Number(transcriptionId))).data;
     setVocabulary(v);
-    let contentWithMark = transcription.current.content;
+    let contentWithMark = transcription.current.content.replaceAll('\n', '<br />');
     v.forEach(word => {
       contentWithMark = contentWithMark.replace(word.word, `<span class="bg-yellow-200 rounded-md py-1">${word.word}</span>`)
     });
