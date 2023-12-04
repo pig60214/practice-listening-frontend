@@ -27,6 +27,10 @@ const apis = {
     const result = (await api.post(`/vocabulary/add`, word)).data;
     return result;
   },
+  async addTranscription(transcription: ITranscription): Promise<ApiResponse> {
+    const result = (await api.post(`/transcription/add`, transcription)).data;
+    return result;
+  },
 };
 
 export default apis;

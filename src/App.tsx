@@ -14,9 +14,12 @@ function App() {
   }, [])
 
   return (
+    <>
+    <a href='add-transcription'>Add New Transcription</a>
     <ul>
       { transcriptions.map(t => <li key={t.id}><Link to={`transcription/${t.id}`}>{t.title}</Link></li>) }
     </ul>
+    </>
   );
 }
 
