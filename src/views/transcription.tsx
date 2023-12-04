@@ -8,10 +8,21 @@ import add from 'assets/icons/add.png';
 
 function Transcription() {
   const { transcriptionId = '0' } = useParams();
-  const [transcription, setTranscription] = useState<ITranscription>({title: "We can't find this article"} as ITranscription);
+  const transcription = useRef<ITranscription>({title: '', content: ''} as ITranscription);
   const [vocabulary, setVocabulary] = useState<IWord[]>([]);
+  const [title, setTitle] = useState<string>("We can't find this article");
   const [content, setContent] = useState<string>('');
   const highlightedText = useRef<string>('');
+
+  const getVocabulary = useCallback(async () => {
+    const v = (await apis.getVocabularyByTranscriptionId(Number(transcriptionId))).data;
+    setVocabulary(v);
+    let contentWithMark = transcription.current.content;
+    v.forEach(word => {
+      contentWithMark = contentWithMark.replace(word.word, `<span class="bg-yellow-200 rounded-md py-1">${word.word}</span>`)
+    });
+    setContent(contentWithMark);
+  }, [transcriptionId]);
 
   useEffect(() => {
     const getTranscriptionAndVocabulary = async () => {
@@ -20,20 +31,13 @@ function Transcription() {
         if (!t) {
           return;
         }
-        setTranscription(t);
-
-        const v = (await apis.getVocabularyByTranscriptionId(Number(transcriptionId))).data;
-        setVocabulary(v);
-
-        let contentWithMark = t.content;
-        v.forEach(word => {
-          contentWithMark = contentWithMark.replace(word.word, `<span class="bg-yellow-200 rounded-md py-1">${word.word}</span>`)
-        });
-        setContent(contentWithMark);
+        transcription.current = t;
+        setTitle(t.title);
+        getVocabulary();
       }
     }
     getTranscriptionAndVocabulary();
-  }, [transcriptionId])
+  }, [transcriptionId, getVocabulary])
 
   useEffect(() => {
     const saveSelection = () => {
@@ -60,8 +64,9 @@ function Transcription() {
       word: highlightedText.current,
     }
     await apis.addWord(word);
+    await getVocabulary();
     setSaving(false);
-  }, [setSaving, transcriptionId, highlightedText]);
+  }, [transcriptionId, getVocabulary]);
 
   useEffect(() => {
     const enterEvent = (e: KeyboardEvent) => {
@@ -75,7 +80,7 @@ function Transcription() {
 
   return (
     <div>
-      <h1>{transcription.title}</h1>
+      <h1>{title}</h1>
       <article>
         { parse(content) }
       </article>
