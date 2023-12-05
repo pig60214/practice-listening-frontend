@@ -94,15 +94,20 @@ function Transcription() {
   }, [saveButton]);
 
   const player = useRef<ReactPlayer>(null);
+  const [currentSecond, setCurrentSecond] = useState(0);
 
   return (
     <div>
       <h1>{title}</h1>
-      <ReactPlayer ref={player} controls playing url={youtubeUrl} />
+      <ReactPlayer ref={player} controls playing url={youtubeUrl} onProgress={({playedSeconds}) => setCurrentSecond(playedSeconds)} />
       <article>
         <ul>
         { parse(content) }
-        { tt.map(t => <li key={t.offset}><span onClick={() => {player.current?.seekTo(t.offset/1000)}}>--</span>{parse(t.text.replaceAll('\n', ' '))}</li>) }
+        { tt.map(t => (
+          <li key={t.offset} className={t.offset/1000 <= currentSecond && t.offset/1000 + t.duration/1000 >= currentSecond ? 'bg-yellow-100' : ''}>
+            <span onClick={() => {player.current?.seekTo(t.offset/1000)}}>--</span>{parse(t.text.replaceAll('\n', ' '))}
+          </li>)
+        ) }
         </ul>
       </article>
       <ul>
