@@ -31,6 +31,10 @@ const apis = {
     const result = (await api.post(`/transcription/add`, transcription)).data;
     return result;
   },
+  async updateTranscription(transcription: ITranscription): Promise<ApiResponse> {
+    const result = (await api.post(`/transcription/update`, transcription)).data;
+    return result;
+  },
 };
 
 export default apis;
