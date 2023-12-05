@@ -7,7 +7,7 @@ import parse from 'html-react-parser';
 import add from 'assets/icons/add.png';
 import ReactPlayer from 'react-player/youtube'
 
-interface tttt {
+interface Transcript {
   text: string,
   duration: number,
   offset: number,
@@ -19,7 +19,7 @@ function Transcription() {
   const [vocabulary, setVocabulary] = useState<IWord[]>([]);
   const [title, setTitle] = useState<string>("We can't find this article");
   const [content, setContent] = useState<string>('');
-  const [tt, settt] = useState<tttt[]>([]);
+  const [transcripts, setTranscripts] = useState<Transcript[]>([]);
   const [youtubeUrl, setYoutubeUrl] = useState<string>('');
   const highlightedText = useRef<string>('');
 
@@ -31,8 +31,8 @@ function Transcription() {
       contentWithMark = contentWithMark.replace(word.word, `<span class='bg-yellow-200 rounded-md py-1'>${word.word}</span>`)
     });
     try {
-      const r = JSON.parse(contentWithMark);
-      settt(r);
+      const result = JSON.parse(contentWithMark);
+      setTranscripts(result);
     } catch (e) {
       setContent(contentWithMark.replaceAll('\n', '<br />'));
     }
@@ -103,7 +103,7 @@ function Transcription() {
       <article>
         <ul>
         { parse(content) }
-        { tt.map(t => (
+        { transcripts.map(t => (
           <li key={t.offset} className={t.offset/1000 <= currentSecond && t.offset/1000 + t.duration/1000 >= currentSecond ? 'bg-yellow-100' : ''}>
             <span onClick={() => {player.current?.seekTo(t.offset/1000)}}>--</span>{parse(t.text.replaceAll('\n', ' '))}
           </li>)
