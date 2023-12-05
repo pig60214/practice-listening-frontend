@@ -5,6 +5,7 @@ import apis from "../apis";
 import IWord from "../models/word";
 import parse from 'html-react-parser';
 import add from 'assets/icons/add.png';
+import ReactPlayer from 'react-player/youtube'
 
 function Transcription() {
   const { transcriptionId = '0' } = useParams();
@@ -12,6 +13,7 @@ function Transcription() {
   const [vocabulary, setVocabulary] = useState<IWord[]>([]);
   const [title, setTitle] = useState<string>("We can't find this article");
   const [content, setContent] = useState<string>('');
+  const [youtubeUrl, setYoutubeUrl] = useState<string>('');
   const highlightedText = useRef<string>('');
 
   const getVocabulary = useCallback(async () => {
@@ -33,6 +35,7 @@ function Transcription() {
         }
         transcription.current = t;
         setTitle(t.title);
+        setYoutubeUrl(t.youtubeUrl);
         getVocabulary();
       }
     }
@@ -78,9 +81,12 @@ function Transcription() {
     return () => document.removeEventListener('keydown', enterEvent);
   }, [saveButton]);
 
+  const player = useRef<ReactPlayer>(null);
+
   return (
     <div>
       <h1>{title}</h1>
+      <ReactPlayer ref={player} controls playing url={youtubeUrl} />
       <article>
         { parse(content) }
       </article>
