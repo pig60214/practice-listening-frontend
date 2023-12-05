@@ -7,23 +7,35 @@ import parse from 'html-react-parser';
 import add from 'assets/icons/add.png';
 import ReactPlayer from 'react-player/youtube'
 
+interface tttt {
+  text: string,
+  duration: number,
+  offset: number,
+}
+
 function Transcription() {
   const { transcriptionId = '0' } = useParams();
   const transcription = useRef<ITranscription>({title: '', content: ''} as ITranscription);
   const [vocabulary, setVocabulary] = useState<IWord[]>([]);
   const [title, setTitle] = useState<string>("We can't find this article");
   const [content, setContent] = useState<string>('');
+  const [tt, settt] = useState<tttt[]>([]);
   const [youtubeUrl, setYoutubeUrl] = useState<string>('');
   const highlightedText = useRef<string>('');
 
   const getVocabulary = useCallback(async () => {
     const v = (await apis.getVocabularyByTranscriptionId(Number(transcriptionId))).data;
     setVocabulary(v);
-    let contentWithMark = transcription.current.content.replaceAll('\n', '<br />');
+    let contentWithMark = transcription.current.content;
     v.forEach(word => {
-      contentWithMark = contentWithMark.replace(word.word, `<span class="bg-yellow-200 rounded-md py-1">${word.word}</span>`)
+      contentWithMark = contentWithMark.replace(word.word, `<span class='bg-yellow-200 rounded-md py-1'>${word.word}</span>`)
     });
-    setContent(contentWithMark);
+    try {
+      const r = JSON.parse(contentWithMark);
+      settt(r);
+    } catch (e) {
+      setContent(contentWithMark.replaceAll('\n', '<br />'));
+    }
   }, [transcriptionId]);
 
   useEffect(() => {
@@ -88,7 +100,10 @@ function Transcription() {
       <h1>{title}</h1>
       <ReactPlayer ref={player} controls playing url={youtubeUrl} />
       <article>
+        <ul>
         { parse(content) }
+        { tt.map(t => <li key={t.offset}><span onClick={() => {player.current?.seekTo(t.offset/1000)}}>--</span>{parse(t.text.replaceAll('\n', ' '))}</li>) }
+        </ul>
       </article>
       <ul>
         { vocabulary.map(word => <li key={word.id}>{ word.word }</li>) }
