@@ -9,10 +9,11 @@ import ReactPlayer from 'react-player/youtube'
 import Transcript from "models/transcript";
 
 function Transcription() {
+  const [loading, setLoading] = useState(true);
   const { transcriptionId = '0' } = useParams();
   const transcription = useRef<ITranscription>({title: '', content: ''} as ITranscription);
   const [vocabulary, setVocabulary] = useState<IWord[]>([]);
-  const [title, setTitle] = useState<string>("We can't find this article");
+  const [title, setTitle] = useState<string>("Loading");
   const [content, setContent] = useState<string>('');
   const [transcripts, setTranscripts] = useState<Transcript[]>([]);
   const [youtubeUrl, setYoutubeUrl] = useState<string>('');
@@ -31,6 +32,7 @@ function Transcription() {
     } catch (e) {
       setContent(contentWithMark.replaceAll('\n', '<br />'));
     }
+    setLoading(false);
   }, [transcriptionId]);
 
   useEffect(() => {
@@ -38,6 +40,8 @@ function Transcription() {
       if (transcriptionId) {
         const t = (await apis.getTranscription(Number(transcriptionId))).data;
         if (!t) {
+          setTitle("We can't find this article");
+          setLoading(false);
           return;
         }
         transcription.current = t;
@@ -108,11 +112,11 @@ function Transcription() {
   }, [playing]);
 
   return (
-    <div className="h-screen" style={{padding: '5%'}}>
+    <div className={`h-screen ${loading? 'animate-pulse' : ''}`} style={{padding: '5%'}}>
       <h1>{title}</h1>
       <div className="flex flex-col md:flex-row md:gap-3" style={{height: '90%'}}>
         <div className="w-full h-full md:w-1/2 flex flex-col">
-          <div className="w-full aspect-video flex-none">
+          <div className="w-full aspect-video flex-none bg-stone-200">
             <ReactPlayer ref={player} width='100%' height='100%' controls playing={playing} url={youtubeUrl} onProgress={({playedSeconds}) => setCurrentSecond(playedSeconds)} />
           </div>
           <button className="md:hidden" onClick={() => setShowVocabularyInMobile(!showVocabularyInMobile)}>{showOrHiddenBtnText}</button>
