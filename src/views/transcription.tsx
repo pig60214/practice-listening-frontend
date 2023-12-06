@@ -117,7 +117,16 @@ function Transcription() {
       <div className="flex flex-col md:flex-row md:gap-3" style={{height: '90%'}}>
         <div className="w-full h-full md:w-1/2 flex flex-col">
           <div className="w-full aspect-video flex-none bg-stone-200">
-            <ReactPlayer ref={player} width='100%' height='100%' controls playing={playing} url={youtubeUrl} onProgress={({playedSeconds}) => setCurrentSecond(playedSeconds)} />
+            <ReactPlayer
+              ref={player}
+              width='100%' height='100%'
+              controls
+              playing={playing}
+              url={youtubeUrl}
+              onProgress={({playedSeconds}) => setCurrentSecond(playedSeconds)}
+              onPause={() => setPlaying(false)}
+              onPlay={() => setPlaying(true)}
+            />
           </div>
           <button className="md:hidden" onClick={() => setShowVocabularyInMobile(!showVocabularyInMobile)}>{showOrHiddenBtnText}</button>
           <ul className={`${showOrHidden} md:block overflow-auto space-y-1`}>
