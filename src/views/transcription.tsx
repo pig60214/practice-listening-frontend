@@ -1,17 +1,12 @@
 import { useParams } from "react-router-dom";
-import ITranscription from "../models/transcription";
+import { ITranscription } from "../models/transcription";
 import { useCallback, useEffect, useRef, useState } from "react";
 import apis from "../apis";
 import IWord from "../models/word";
 import parse from 'html-react-parser';
 import add from 'assets/icons/add.png';
 import ReactPlayer from 'react-player/youtube'
-
-interface Transcript {
-  text: string,
-  duration: number,
-  offset: number,
-}
+import Transcript from "models/transcript";
 
 function Transcription() {
   const { transcriptionId = '0' } = useParams();

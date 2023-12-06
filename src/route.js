@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import Transcription from "./views/transcription";
 import App from "./App";
-import AddTranscription from "views/addTranscription";
 import UpdateTranscription from "views/updateTranscription";
 
 const router = createBrowserRouter([
@@ -13,7 +12,7 @@ const router = createBrowserRouter([
     element: <Transcription />,
   }, {
     path: "/add-transcription",
-    element: <AddTranscription />,
+    element: <UpdateTranscription />,
   },
   {
     path: "/update-transcription/:transcriptionId",

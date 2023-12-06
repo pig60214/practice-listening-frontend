@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import apis from './apis';
 import { Link } from "react-router-dom";
-import ITranscription from './models/transcription';
+import { ITranscription } from './models/transcription';
 
 function App() {
   const [transcriptions, setTranscriptions] = useState<ITranscription[]>([]);

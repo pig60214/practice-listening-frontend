@@ -1,7 +1,9 @@
 import axios from "axios";
-import ITranscription from "./models/transcription";
+import { IAddTranscription, ITranscription, IUpdateTranscription } from "./models/transcription";
 import ApiResponse from "./models/apiResponse";
 import IWord from "./models/word";
+import FetchYoutubeTranscriptionRequest from "models/fetchYoutubeTranscriptionRequest";
+import Transcript from "models/transcript";
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_END_POINT,
@@ -27,12 +29,16 @@ const apis = {
     const result = (await api.post(`/vocabulary/add`, word)).data;
     return result;
   },
-  async addTranscription(transcription: ITranscription): Promise<ApiResponse> {
+  async addTranscription(transcription: IAddTranscription): Promise<ApiResponse> {
     const result = (await api.post(`/transcription/add`, transcription)).data;
     return result;
   },
-  async updateTranscription(transcription: ITranscription): Promise<ApiResponse> {
+  async updateTranscription(transcription: IUpdateTranscription): Promise<ApiResponse> {
     const result = (await api.post(`/transcription/update`, transcription)).data;
+    return result;
+  },
+  async fetchYoutubeTranscription(request: FetchYoutubeTranscriptionRequest): Promise<ApiResponse<Transcript[]>> {
+    const result = (await api.post(`/transcription/fetch-youtube-transcription`, request)).data;
     return result;
   },
 };
