@@ -95,24 +95,37 @@ function Transcription() {
 
   const player = useRef<ReactPlayer>(null);
   const [currentSecond, setCurrentSecond] = useState(0);
+  const [showVocabularyInMobile, setShowVocabularyInMobile] = useState(false);
+  const showOrHidden = showVocabularyInMobile ? 'block' : 'hidden';
+  const showOrHiddenBtnText = showVocabularyInMobile ? 'Hide Vocabulary' : 'Show Vocabulary'
+  const isHighlighted = (transcript: Transcript) => transcript.offset/1000 <= currentSecond && transcript.offset/1000 + transcript.duration/1000 >= currentSecond ? 'bg-yellow-100' : '';
 
   return (
-    <div>
+    <div className="h-screen" style={{padding: '5%'}}>
       <h1>{title}</h1>
-      <ReactPlayer ref={player} controls playing url={youtubeUrl} onProgress={({playedSeconds}) => setCurrentSecond(playedSeconds)} />
-      <article>
-        <ul>
-        { parse(content) }
-        { transcripts.map(t => (
-          <li key={t.offset} className={t.offset/1000 <= currentSecond && t.offset/1000 + t.duration/1000 >= currentSecond ? 'bg-yellow-100' : ''}>
-            <span onClick={() => {player.current?.seekTo(t.offset/1000)}}>--</span>{parse(t.text.replaceAll('\n', ' '))}
-          </li>)
-        ) }
-        </ul>
-      </article>
-      <ul>
-        { vocabulary.map(word => <li key={word.id}>{ word.word }</li>) }
-      </ul>
+      <div className="flex flex-col md:flex-row md:gap-3" style={{height: '90%'}}>
+        <div className="w-full h-full md:w-1/2 flex flex-col">
+          <div className="w-full aspect-video flex-none">
+            <ReactPlayer ref={player} width='100%' height='100%' controls playing url={youtubeUrl} onProgress={({playedSeconds}) => setCurrentSecond(playedSeconds)} />
+          </div>
+          <button className="md:hidden" onClick={() => setShowVocabularyInMobile(!showVocabularyInMobile)}>{showOrHiddenBtnText}</button>
+          <ul className={`${showOrHidden} md:block overflow-auto space-y-1`}>
+            { vocabulary.map(word => <li key={word.id}>{ word.word }</li>) }
+          </ul>
+        </div>
+        <article className="w-full md:w-1/2 overflow-auto">
+          <ul className="space-y-2">
+          { parse(content) }
+          { transcripts.map(t => (
+            <li key={t.offset} className={`${isHighlighted(t)}`}>
+              <span onClick={() => {player.current?.seekTo(t.offset/1000)}} className="cursor-pointer pr-2">▶</span>
+              {parse(t.text.replaceAll('\n', ' '))}
+            </li>)
+          ) }
+          </ul>
+        </article>
+      </div>
+
       <div className='fixed w-8 right-4 top-1/2'>
       <button className={`w-10 h-10 rounded-full shadow-lg bg-stone-200 hover:border hover:border-stone-500 disabled:opacity-80 disabled:border-none`} onClick={saveButton} disabled={saving}>
         <img className='m-auto' src={add} alt=''/>
