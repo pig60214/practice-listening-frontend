@@ -100,13 +100,25 @@ function Transcription() {
   const showOrHiddenBtnText = showVocabularyInMobile ? 'Hide Vocabulary' : 'Show Vocabulary'
   const isHighlighted = (transcript: Transcript) => transcript.offset/1000 <= currentSecond && transcript.offset/1000 + transcript.duration/1000 >= currentSecond ? 'bg-yellow-100' : '';
 
+  const [playing, setPlaying] = useState(false);
+  useEffect(() => {
+    const enterEvent = (e: KeyboardEvent) => {
+      if (e.key === ' ') {
+        setPlaying(!playing);
+        e.preventDefault()
+      }
+    }
+    document.body.addEventListener('keydown', enterEvent)
+    return () => document.removeEventListener('keydown', enterEvent);
+  }, [playing]);
+
   return (
     <div className="h-screen" style={{padding: '5%'}}>
       <h1>{title}</h1>
       <div className="flex flex-col md:flex-row md:gap-3" style={{height: '90%'}}>
         <div className="w-full h-full md:w-1/2 flex flex-col">
           <div className="w-full aspect-video flex-none">
-            <ReactPlayer ref={player} width='100%' height='100%' controls playing url={youtubeUrl} onProgress={({playedSeconds}) => setCurrentSecond(playedSeconds)} />
+            <ReactPlayer ref={player} width='100%' height='100%' controls playing={playing} url={youtubeUrl} onProgress={({playedSeconds}) => setCurrentSecond(playedSeconds)} />
           </div>
           <button className="md:hidden" onClick={() => setShowVocabularyInMobile(!showVocabularyInMobile)}>{showOrHiddenBtnText}</button>
           <ul className={`${showOrHidden} md:block overflow-auto space-y-1`}>
