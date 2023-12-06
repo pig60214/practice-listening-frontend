@@ -112,7 +112,7 @@ function Transcription() {
   }, [playing]);
 
   return (
-    <div className={`h-screen ${loading? 'animate-pulse' : ''}`} style={{padding: '5%'}}>
+    <div className={` ${loading? 'animate-pulse' : ''}`} style={{height: '90dvh'}}>
       <h1>{title}</h1>
       <div className="flex flex-col md:flex-row md:gap-3" style={{height: '90%'}}>
         <div className="w-full h-full md:w-1/2 flex flex-col">
