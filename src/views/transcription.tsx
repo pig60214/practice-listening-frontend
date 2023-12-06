@@ -129,7 +129,7 @@ function Transcription() {
           { parse(content) }
           { transcripts.map(t => (
             <li key={t.offset} className={`${isHighlighted(t)}`}>
-              <span onClick={() => {player.current?.seekTo(t.offset/1000)}} className="cursor-pointer pr-2">▶</span>
+              <span onClick={() => {player.current?.seekTo(t.offset/1000); setPlaying(true);}} className="cursor-pointer pr-2">▶</span>
               {parse(t.text.replaceAll('\n', ' '))}
             </li>)
           ) }
