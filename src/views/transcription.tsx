@@ -7,6 +7,7 @@ import parse from 'html-react-parser';
 import add from 'assets/icons/add.png';
 import ReactPlayer from 'react-player/youtube'
 import Transcript from "models/transcript";
+import { useIsVisible } from "models/hooks/useIsVisible";
 
 function Transcription() {
   const [loading, setLoading] = useState(true);
@@ -18,6 +19,7 @@ function Transcription() {
   const [transcripts, setTranscripts] = useState<Transcript[]>([]);
   const [youtubeUrl, setYoutubeUrl] = useState<string>('');
   const highlightedText = useRef<string>('');
+  const startSecond = useRef(0);
 
   const getVocabulary = useCallback(async () => {
     const v = (await apis.getVocabularyByTranscriptionId(Number(transcriptionId))).data;
@@ -27,8 +29,11 @@ function Transcription() {
       contentWithMark = contentWithMark.replace(word.word, `<span class='bg-yellow-200 rounded-md py-1'>${word.word}</span>`)
     });
     try {
-      const result = JSON.parse(contentWithMark);
-      setTranscripts(result);
+      const result: Transcript[] = JSON.parse(contentWithMark);
+      if (result.length > 0) {
+        setTranscripts(result);
+        startSecond.current = result[0].offset / 1000;
+      }
     } catch (e) {
       setContent(contentWithMark.replaceAll('\n', '<br />'));
     }
@@ -96,8 +101,12 @@ function Transcription() {
   const [currentSecond, setCurrentSecond] = useState(0);
   const [showVocabularyInMobile, setShowVocabularyInMobile] = useState(false);
   const showOrHidden = showVocabularyInMobile ? 'block' : 'hidden';
-  const showOrHiddenBtnText = showVocabularyInMobile ? 'Hide Vocabulary' : 'Show Vocabulary'
-  const isHighlighted = (transcript: Transcript) => transcript.offset/1000 <= currentSecond && transcript.offset/1000 + transcript.duration/1000 >= currentSecond ? 'bg-yellow-100' : '';
+  const showOrHiddenBtnText = showVocabularyInMobile ? 'Hide Vocabulary' : 'Show Vocabulary';
+  const [currentLine, setCurrentLine] = useState<HTMLLIElement>();
+  const isCurrentLine = (transcript: Transcript, index: number) => {
+    if (currentSecond < startSecond.current && index === 0) return true;
+    return transcript.offset/1000 <= currentSecond && transcript.offset/1000 + transcript.duration/1000 > currentSecond;
+  }
 
   const [playing, setPlaying] = useState(false);
   useEffect(() => {
@@ -110,6 +119,18 @@ function Transcription() {
     document.body.addEventListener('keydown', enterEvent)
     return () => document.removeEventListener('keydown', enterEvent);
   }, [playing]);
+
+  const isVisible = useIsVisible(currentLine, { threshold: 1 });
+  const handleRect = useCallback((node: HTMLLIElement) => {
+    setCurrentLine(node);
+  }, []);
+
+  useEffect(() => {
+    if(!isVisible) {
+      currentLine?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [currentLine, isVisible]);
+
 
   return (
     <div className={` ${loading? 'animate-pulse' : ''}`} style={{height: '90dvh'}}>
@@ -136,12 +157,16 @@ function Transcription() {
         <article className="w-full md:w-1/2 overflow-auto">
           <ul className="space-y-2">
           { parse(content) }
-          { transcripts.map(t => (
-            <li key={t.offset} className={`${isHighlighted(t)}`}>
-              <span onClick={() => {player.current?.seekTo(t.offset/1000); setPlaying(true);}} className="cursor-pointer pr-2">▶</span>
-              {parse(t.text.replaceAll('\n', ' '))}
-            </li>)
-          ) }
+          { transcripts.map((transcript, index) => {
+              const isMe = isCurrentLine(transcript, index);
+              const className = isMe ? 'bg-yellow-100' : '';
+              return(
+                <li key={transcript.offset} className={className} ref={isMe ? handleRect : null}>
+                  <span onClick={() => {player.current?.seekTo(transcript.offset/1000); setPlaying(true);}} className="cursor-pointer pr-2">▶</span>
+                  {parse(transcript.text.replaceAll('\n', ' '))}
+                </li>)
+            }
+          )}
           </ul>
         </article>
       </div>
