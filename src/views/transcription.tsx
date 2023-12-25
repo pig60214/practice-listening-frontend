@@ -99,9 +99,6 @@ function Transcription() {
 
   const player = useRef<ReactPlayer>(null);
   const [currentSecond, setCurrentSecond] = useState(0);
-  const [showVocabularyInMobile, setShowVocabularyInMobile] = useState(false);
-  const showOrHidden = showVocabularyInMobile ? 'block' : 'hidden';
-  const showOrHiddenBtnText = showVocabularyInMobile ? 'Hide Vocabulary' : 'Show Vocabulary';
   const [currentLine, setCurrentLine] = useState<HTMLLIElement>();
   const isCurrentLine = (transcript: Transcript, index: number) => {
     if (currentSecond < startSecond.current && index === 0) return true;
@@ -131,6 +128,9 @@ function Transcription() {
     }
   }, [playing, currentLine, isVisible]);
 
+  const [showVocabularyInMobile, setShowVocabularyInMobile] = useState(false);
+  const showOrHidden = showVocabularyInMobile ? 'block' : 'hidden';
+  const showOrHiddenBtnText = showVocabularyInMobile ? 'Hide Vocabulary' : 'Show Vocabulary';
 
   return (
     <div className={` ${loading? 'animate-pulse' : ''}`} style={{height: '90dvh'}}>
