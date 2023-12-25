@@ -1,5 +1,5 @@
 import Transcript from "models/transcript";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useIsVisible } from "../useIsVisible";
 
 export default function useDynamicTranscript(startSecond: number, isPlaying: boolean) {
@@ -14,12 +14,15 @@ export default function useDynamicTranscript(startSecond: number, isPlaying: boo
     return transcript.offset/1000 <= currentSecond && transcript.offset/1000 + transcript.duration/1000 > currentSecond;
   }
 
+  const isPlayingRef = useRef(false);
+  useEffect(() => { isPlayingRef.current = isPlaying; }, [isPlaying])
+
   const isVisible = useIsVisible(currentLine, { threshold: 1 });
   useEffect(() => {
-    if(isPlaying && !isVisible) {
+    if(isPlayingRef.current && !isVisible) {
       currentLine?.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [isPlaying, currentLine, isVisible]);
+  }, [currentLine, isVisible]);
 
   return {
     setCurrentSecond,
