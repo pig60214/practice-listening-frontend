@@ -62,9 +62,9 @@ function Transcription() {
   const showOrHiddenBtnText = showVocabularyInMobile ? 'Hide Vocabulary' : 'Show Vocabulary';
 
   return (
-    <div className={` ${loading? 'animate-pulse' : ''}`} style={{height: '90dvh'}}>
+    <div className={`h-full flex flex-col ${loading? 'animate-pulse' : ''}`}>
       <h1>{title}</h1>
-      <div className="flex flex-col md:flex-row md:gap-3" style={{height: '90%'}}>
+      <div className="grow h-0 flex flex-col md:flex-row md:gap-3" >
         <div className="w-full h-full md:w-1/2 flex flex-col">
           <div className="w-full aspect-video flex-none bg-stone-200">
             <ReactPlayer
