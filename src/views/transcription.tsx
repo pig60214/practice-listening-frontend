@@ -8,6 +8,7 @@ import ReactPlayer from 'react-player/youtube'
 import Transcript from "models/transcript";
 import { useIsVisible } from "models/hooks/useIsVisible";
 import useTranscription from "models/hooks/transcription/useTranscription";
+import useIsPlaying from "models/hooks/transcription/useIsPlaying";
 
 function Transcription() {
   const { transcriptionId = '0' } = useParams();
@@ -54,6 +55,7 @@ function Transcription() {
   }, [saveButton]);
 
   const player = useRef<ReactPlayer>(null);
+  const { isPlaying, setIsPlaying } = useIsPlaying();
   const [currentSecond, setCurrentSecond] = useState(0);
   const [currentLine, setCurrentLine] = useState<HTMLLIElement>();
   const isCurrentLine = (transcript: Transcript, index: number) => {
@@ -61,28 +63,16 @@ function Transcription() {
     return transcript.offset/1000 <= currentSecond && transcript.offset/1000 + transcript.duration/1000 > currentSecond;
   }
 
-  const [playing, setPlaying] = useState(false);
-  useEffect(() => {
-    const enterEvent = (e: KeyboardEvent) => {
-      if (e.key === ' ') {
-        setPlaying(!playing);
-        e.preventDefault()
-      }
-    }
-    document.body.addEventListener('keydown', enterEvent)
-    return () => document.removeEventListener('keydown', enterEvent);
-  }, [playing]);
-
   const isVisible = useIsVisible(currentLine, { threshold: 1 });
   const handleRect = useCallback((node: HTMLLIElement) => {
     setCurrentLine(node);
   }, []);
 
   useEffect(() => {
-    if(playing && !isVisible) {
+    if(isPlaying && !isVisible) {
       currentLine?.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [playing, currentLine, isVisible]);
+  }, [isPlaying, currentLine, isVisible]);
 
   const [showVocabularyInMobile, setShowVocabularyInMobile] = useState(false);
   const showOrHidden = showVocabularyInMobile ? 'block' : 'hidden';
@@ -98,11 +88,11 @@ function Transcription() {
               ref={player}
               width='100%' height='100%'
               controls
-              playing={playing}
+              playing={isPlaying}
               url={youtubeUrl}
               onProgress={({playedSeconds}) => setCurrentSecond(playedSeconds)}
-              onPause={() => setPlaying(false)}
-              onPlay={() => setPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+              onPlay={() => setIsPlaying(true)}
             />
           </div>
           <button className="md:hidden" onClick={() => setShowVocabularyInMobile(!showVocabularyInMobile)}>{showOrHiddenBtnText}</button>
@@ -118,7 +108,7 @@ function Transcription() {
               const className = isMe ? 'bg-yellow-100' : '';
               return(
                 <li key={transcript.offset} className={className} ref={isMe ? handleRect : null}>
-                  <span onClick={() => {player.current?.seekTo(transcript.offset/1000); setPlaying(true);}} className="cursor-pointer pr-2">▶</span>
+                  <span onClick={() => {player.current?.seekTo(transcript.offset/1000); setIsPlaying(true);}} className="cursor-pointer pr-2">▶</span>
                   {parse(transcript.text.replaceAll('\n', ' '))}
                 </li>)
             }
