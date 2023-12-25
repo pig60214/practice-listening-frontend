@@ -126,10 +126,10 @@ function Transcription() {
   }, []);
 
   useEffect(() => {
-    if(!isVisible) {
+    if(playing && !isVisible) {
       currentLine?.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [currentLine, isVisible]);
+  }, [playing, currentLine, isVisible]);
 
 
   return (
