@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom";
-import { ITranscription } from "../models/transcription";
 import { useCallback, useEffect, useRef, useState } from "react";
 import apis from "../apis";
 import IWord from "../models/word";
@@ -8,55 +7,12 @@ import add from 'assets/icons/add.png';
 import ReactPlayer from 'react-player/youtube'
 import Transcript from "models/transcript";
 import { useIsVisible } from "models/hooks/useIsVisible";
+import useTranscription from "models/hooks/transcription/useTranscription";
 
 function Transcription() {
-  const [loading, setLoading] = useState(true);
   const { transcriptionId = '0' } = useParams();
-  const transcription = useRef<ITranscription>({title: '', content: ''} as ITranscription);
-  const [vocabulary, setVocabulary] = useState<IWord[]>([]);
-  const [title, setTitle] = useState<string>("Loading");
-  const [content, setContent] = useState<string>('');
-  const [transcripts, setTranscripts] = useState<Transcript[]>([]);
-  const [youtubeUrl, setYoutubeUrl] = useState<string>('');
+  const { vocabulary, transcripts, content, loading, title, youtubeUrl, startSecond, getVocabulary } = useTranscription(transcriptionId);
   const highlightedText = useRef<string>('');
-  const startSecond = useRef(0);
-
-  const getVocabulary = useCallback(async () => {
-    const v = (await apis.getVocabularyByTranscriptionId(Number(transcriptionId))).data;
-    setVocabulary(v);
-    let contentWithMark = transcription.current.content;
-    v.forEach(word => {
-      contentWithMark = contentWithMark.replace(word.word, `<span class='bg-yellow-200 rounded-md py-1'>${word.word}</span>`)
-    });
-    try {
-      const result: Transcript[] = JSON.parse(contentWithMark);
-      if (result.length > 0) {
-        setTranscripts(result);
-        startSecond.current = result[0].offset / 1000;
-      }
-    } catch (e) {
-      setContent(contentWithMark.replaceAll('\n', '<br />'));
-    }
-    setLoading(false);
-  }, [transcriptionId]);
-
-  useEffect(() => {
-    const getTranscriptionAndVocabulary = async () => {
-      if (transcriptionId) {
-        const t = (await apis.getTranscription(Number(transcriptionId))).data;
-        if (!t) {
-          setTitle("We can't find this article");
-          setLoading(false);
-          return;
-        }
-        transcription.current = t;
-        setTitle(t.title);
-        setYoutubeUrl(t.youtubeUrl);
-        getVocabulary();
-      }
-    }
-    getTranscriptionAndVocabulary();
-  }, [transcriptionId, getVocabulary])
 
   useEffect(() => {
     const saveSelection = () => {
