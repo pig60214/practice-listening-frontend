@@ -5,10 +5,9 @@ import IWord from "../models/word";
 import parse from 'html-react-parser';
 import add from 'assets/icons/add.png';
 import ReactPlayer from 'react-player/youtube'
-import Transcript from "models/transcript";
-import { useIsVisible } from "models/hooks/useIsVisible";
 import useTranscription from "models/hooks/transcription/useTranscription";
 import useIsPlaying from "models/hooks/transcription/useIsPlaying";
+import useDynamicTranscript from "models/hooks/transcription/useDynamicTranscript";
 
 function Transcription() {
   const { transcriptionId = '0' } = useParams();
@@ -56,23 +55,7 @@ function Transcription() {
 
   const player = useRef<ReactPlayer>(null);
   const { isPlaying, setIsPlaying } = useIsPlaying();
-  const [currentSecond, setCurrentSecond] = useState(0);
-  const [currentLine, setCurrentLine] = useState<HTMLLIElement>();
-  const isCurrentLine = (transcript: Transcript, index: number) => {
-    if (currentSecond < startSecond.current && index === 0) return true;
-    return transcript.offset/1000 <= currentSecond && transcript.offset/1000 + transcript.duration/1000 > currentSecond;
-  }
-
-  const isVisible = useIsVisible(currentLine, { threshold: 1 });
-  const handleRect = useCallback((node: HTMLLIElement) => {
-    setCurrentLine(node);
-  }, []);
-
-  useEffect(() => {
-    if(isPlaying && !isVisible) {
-      currentLine?.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [isPlaying, currentLine, isVisible]);
+  const { setCurrentSecond, isCurrentLine, saveHTMLElementToState } = useDynamicTranscript(startSecond.current, isPlaying);
 
   const [showVocabularyInMobile, setShowVocabularyInMobile] = useState(false);
   const showOrHidden = showVocabularyInMobile ? 'block' : 'hidden';
@@ -107,7 +90,7 @@ function Transcription() {
               const isMe = isCurrentLine(transcript, index);
               const className = isMe ? 'bg-yellow-100' : '';
               return(
-                <li key={transcript.offset} className={className} ref={isMe ? handleRect : null}>
+                <li key={transcript.offset} className={className} ref={isMe ? saveHTMLElementToState : null}>
                   <span onClick={() => {player.current?.seekTo(transcript.offset/1000); setIsPlaying(true);}} className="cursor-pointer pr-2">▶</span>
                   {parse(transcript.text.replaceAll('\n', ' '))}
                 </li>)
