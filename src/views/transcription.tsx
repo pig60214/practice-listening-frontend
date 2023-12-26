@@ -63,7 +63,7 @@ function Transcription() {
 
   return (
     <div className={`h-full flex flex-col ${loading? 'animate-pulse' : ''}`}>
-      <h1>{title}</h1>
+      <h1 className="px-4 md:px-0">{title}</h1>
       <div className="grow h-0 flex flex-col md:flex-row md:gap-3" >
         <div className="w-full h-full md:w-1/2 flex flex-col">
           <div className="w-full aspect-video flex-none bg-stone-200">
@@ -78,12 +78,12 @@ function Transcription() {
               onPlay={() => setIsPlaying(true)}
             />
           </div>
-          <button className="md:hidden" onClick={() => setShowVocabularyInMobile(!showVocabularyInMobile)}>{showOrHiddenBtnText}</button>
-          <ul className={`${showOrHidden} md:block overflow-auto space-y-1`}>
+          <button className="px-4 md:hidden" onClick={() => setShowVocabularyInMobile(!showVocabularyInMobile)}>{showOrHiddenBtnText}</button>
+          <ul className={`${showOrHidden} md:block overflow-auto space-y-1 px-4 md:px-0`}>
             { vocabulary.map(word => <li key={word.id}>{ word.word }</li>) }
           </ul>
         </div>
-        <article className="w-full md:w-1/2 overflow-auto">
+        <article className="w-full md:w-1/2 overflow-auto px-4 md:px-0">
           <ul className="space-y-2">
           { parse(content) }
           { transcripts.map((transcript, index) => {
