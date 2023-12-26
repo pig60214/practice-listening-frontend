@@ -38,7 +38,7 @@ export default function UpdateTranscription() {
       youtubeUrl: transcription.youtubeUrl,
     }
     const result = await apis.fetchYoutubeTranscription(request);
-    setTranscription({...transcription, content: JSON.stringify(result.data)});
+    setTranscription({...transcription, title: result.data.title, content: JSON.stringify(result.data.transcript)});
     setRetreving(false);
   }
   return (
@@ -46,7 +46,7 @@ export default function UpdateTranscription() {
     <div className="flex flex-col">
       <input value={transcription.title} onChange={(e) => setTranscription({...transcription, title: e.target.value})} placeholder="Title" />
       <input value={transcription.youtubeUrl} onChange={(e) => setTranscription({...transcription, youtubeUrl: e.target.value})} placeholder="Youtube Url" />
-      <button onClick={fetchYoutubeTranscription} disabled={retreving}>Retrieve Transcript From Youtube</button>
+      <button onClick={fetchYoutubeTranscription} disabled={retreving}>Retrieve Title & Transcript From Youtube</button>
       <textarea value={transcription.content} onChange={(e) => setTranscription({...transcription, content: e.target.value})} placeholder="Transcript"></textarea>
       <button onClick={saveTranscription} disabled={saving}>save</button>
     </div>

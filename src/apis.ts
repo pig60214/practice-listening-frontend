@@ -3,7 +3,7 @@ import { IAddTranscription, ITranscription, IUpdateTranscription } from "./model
 import ApiResponse from "./models/apiResponse";
 import IWord from "./models/word";
 import FetchYoutubeTranscriptionRequest from "models/fetchYoutubeTranscriptionRequest";
-import Transcript from "models/transcript";
+import YoutubeInfo from "models/youtubeInfo";
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_END_POINT,
@@ -37,7 +37,7 @@ const apis = {
     const result = (await api.post(`/transcription/update`, transcription)).data;
     return result;
   },
-  async fetchYoutubeTranscription(request: FetchYoutubeTranscriptionRequest): Promise<ApiResponse<Transcript[]>> {
+  async fetchYoutubeTranscription(request: FetchYoutubeTranscriptionRequest): Promise<ApiResponse<YoutubeInfo>> {
     const result = (await api.post(`/transcription/fetch-youtube-transcription`, request)).data;
     return result;
   },
