@@ -43,23 +43,23 @@ function App() {
   const VideoImage = (props: VideoImageProps) => {
     const videoId = getVideoId(props.youtubeUrl);
     if (videoId === '') {
-      return <div style={{maxWidth: 480, aspectRatio: '4/3'}} className='bg-stone-100'></div>;
+      return <div className='bg-stone-100 aspect-video'></div>;
     }
-    return <img src={`https://img.youtube.com/vi/${videoId}/0.jpg`} alt={props.youtubeUrl} />
+    return <div style={{backgroundImage: `url('https://img.youtube.com/vi/${videoId}/0.jpg')`}} className='aspect-video bg-cover bg-center'></div>
   }
 
   return (
     <>
     <ul className='grid gap-3 justify-items-center grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
-      { loading && [1,2,3,4,5,6].map(i => (<>
-        <li key={i}><div>
-          <div className='animate-pulse w-full md:w-60 bg-stone-200' style={{aspectRatio: '4/3'}}></div>
+      { loading && [1,2,3,4,5,6].map(i => (
+        <li key={i} className='w-full md:w-60'><div>
+          <div className='animate-pulse aspect-video bg-stone-200'></div>
           <div className='bg-stone-200 h-4 mt-1'></div>
         </div></li>
-      </>))}
+      ))}
       { transcriptions.map(t => (
-        <li key={t.id}>
-          <Link to={`transcription/${t.id}`} className='w-full md:w-60 block'>
+        <li key={t.id} className='w-full md:w-60'>
+          <Link to={`transcription/${t.id}`} className='w-full block'>
             <VideoImage youtubeUrl={t.youtubeUrl} />
             {t.title}
           </Link>
