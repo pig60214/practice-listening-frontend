@@ -42,8 +42,7 @@ export default function UpdateTranscription() {
     setRetreving(false);
   }
   return (
-    <>
-    <div className="grid gap-2 justify-items-stretch max-w-3xl mx-4 md:mx-auto">
+    <div className="grid gap-2 justify-items-stretch max-w-3xl mt-4 md:mt-0 mx-4 md:mx-auto">
       <div className="flex gap-2">
       <input className="grow textbox" value={transcription.youtubeUrl} onChange={(e) => setTranscription({...transcription, youtubeUrl: e.target.value})} placeholder="Youtube Url" />
       <button className="button secondary md:w-fit justify-self-center" onClick={fetchYoutubeTranscription} disabled={retreving}>Retrieve</button>
@@ -52,6 +51,5 @@ export default function UpdateTranscription() {
       <textarea className="textbox" value={transcription.content} onChange={(e) => setTranscription({...transcription, content: e.target.value})} placeholder="Transcript"></textarea>
       <button className="button md:w-fit justify-self-center mt-3" onClick={saveTranscription} disabled={saving}>save</button>
     </div>
-    </>
   );
 }

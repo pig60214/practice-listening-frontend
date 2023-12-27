@@ -59,54 +59,54 @@ function Transcription() {
 
   const [showVocabularyInMobile, setShowVocabularyInMobile] = useState(false);
   const showOrHidden = showVocabularyInMobile ? 'block' : 'hidden';
-  const showOrHiddenBtnText = showVocabularyInMobile ? 'Hide Vocabulary' : 'Show Vocabulary';
+  const showOrHiddenForTranscript = showVocabularyInMobile ? 'hidden' : 'block';
+  const showOrHiddenBtnText = showVocabularyInMobile ? 'Vocabulary ▲' : 'Vocabulary ▼';
 
-  return (
-    <div className={`h-full flex flex-col ${loading? 'animate-pulse' : ''}`}>
-      <h1 className="px-4 md:px-0">{title}</h1>
-      <div className="grow h-0 flex flex-col md:flex-row md:gap-3" >
-        <div className="w-full h-full md:w-1/2 flex flex-col">
-          <div className="w-full aspect-video flex-none bg-stone-200">
-            <ReactPlayer
-              ref={player}
-              width='100%' height='100%'
-              controls
-              playing={isPlaying}
-              url={youtubeUrl}
-              onProgress={({playedSeconds}) => setCurrentSecond(playedSeconds)}
-              onPause={() => setIsPlaying(false)}
-              onPlay={() => setIsPlaying(true)}
-            />
-          </div>
-          <button className="px-4 md:hidden" onClick={() => setShowVocabularyInMobile(!showVocabularyInMobile)}>{showOrHiddenBtnText}</button>
-          <ul className={`${showOrHidden} md:block overflow-auto space-y-1 px-4 md:px-0`}>
+  return (<>
+    <div className={`${loading? 'animate-pulse' : ''} h-full flex flex-col md:flex-row md:gap-3`}>
+      <div className="w-full h-full md:w-1/2 flex flex-col">
+        <div className="w-full aspect-video flex-none bg-stone-200">
+          <ReactPlayer
+            ref={player}
+            width='100%' height='100%'
+            controls
+            playing={isPlaying}
+            url={youtubeUrl}
+            onProgress={({playedSeconds}) => setCurrentSecond(playedSeconds)}
+            onPause={() => setIsPlaying(false)}
+            onPlay={() => setIsPlaying(true)}
+          />
+        </div>
+        <h1 className="px-4 md:px-0 md:text-lg font-semibold md:font-bold my-1 truncate">{title}</h1>
+        <div className="mx-4 px-2 py-1 md:hidden text-center bg-stone-200" onClick={() => setShowVocabularyInMobile(!showVocabularyInMobile)}>{showOrHiddenBtnText}</div>
+        <div className={`${showOrHidden} md:block / mb-4 md:mb-0 mx-4 md:mx-0 px-2 py-1 / grow h-0 overflow-auto / bg-stone-200`}>
+          <ul className='space-y-1'>
             { vocabulary.map(word => <li key={word.id}>{ word.word }</li>) }
           </ul>
         </div>
-        <article className="w-full md:w-1/2 overflow-auto px-4 md:px-0">
-          <ul className="space-y-2">
-          { parse(content) }
-          { transcripts.map((transcript, index) => {
-              const isMe = isCurrentLine(transcript, index);
-              const className = isMe ? 'bg-yellow-100' : '';
-              return(
-                <li key={transcript.offset} className={className} ref={isMe ? saveHTMLElementToState : null}>
-                  <span onClick={() => {player.current?.seekTo(transcript.offset/1000); setIsPlaying(true);}} className="cursor-pointer pr-2">▶</span>
-                  {parse(transcript.text.replaceAll('\n', ' '))}
-                </li>)
-            }
-          )}
-          </ul>
-        </article>
       </div>
-
-      <div className='fixed w-8 right-4 top-1/2'>
+      <article className={`${showOrHiddenForTranscript} md:block w-full md:w-1/2 overflow-auto pb-4 px-4 md:p-0`}>
+        <ul className="space-y-2">
+        { parse(content) }
+        { transcripts.map((transcript, index) => {
+            const isMe = isCurrentLine(transcript, index);
+            const className = isMe ? 'bg-yellow-100' : '';
+            return(
+              <li key={transcript.offset} className={className} ref={isMe ? saveHTMLElementToState : null}>
+                <span onClick={() => {player.current?.seekTo(transcript.offset/1000); setIsPlaying(true);}} className="cursor-pointer pr-2">▶</span>
+                {parse(transcript.text.replaceAll('\n', ' '))}
+              </li>)
+          }
+        )}
+        </ul>
+      </article>
+    </div>
+    <div className='fixed w-8 right-4 top-1/2'>
       <button className={`w-10 h-10 rounded-full shadow-lg bg-stone-200 hover:border hover:border-stone-500 disabled:opacity-80 disabled:border-none`} onClick={saveButton} disabled={saving}>
         <img className='m-auto' src={add} alt=''/>
       </button>
-      </div>
     </div>
-  );
+  </>);
 }
 
 export default Transcription;
