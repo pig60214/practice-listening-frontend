@@ -55,12 +55,32 @@ function Transcription() {
 
   const player = useRef<ReactPlayer>(null);
   const { isPlaying, setIsPlaying } = useIsPlaying();
-  const { setCurrentSecond, isCurrentLine, saveHTMLElementToState } = useDynamicTranscript(startSecond.current, isPlaying);
+  const [currentSecond, setCurrentSecond] = useState(0);
 
   const [showVocabularyInMobile, setShowVocabularyInMobile] = useState(false);
   const showOrHidden = showVocabularyInMobile ? 'block' : 'hidden';
   const showOrHiddenForTranscript = showVocabularyInMobile ? 'hidden' : 'block';
   const showOrHiddenBtnText = showVocabularyInMobile ? 'Vocabulary ▲' : 'Vocabulary ▼';
+
+  const TranscriptArea = () => {
+    const { isCurrentLine, saveHTMLElementToState } = useDynamicTranscript(startSecond.current, currentSecond, isPlaying);
+    return (
+      <ul className="space-y-2">
+      { parse(content) }
+      { transcripts.map((transcript, index) => {
+          const isMe = isCurrentLine(transcript, index);
+          const className = isMe ? 'bg-yellow-100' : '';
+          return(
+            <li key={transcript.offset} className={className} ref={isMe ? saveHTMLElementToState : null}>
+              <span onClick={() => {player.current?.seekTo(transcript.offset/1000); setIsPlaying(true);}} className="cursor-pointer pr-2">▶</span>
+              {parse(transcript.text.replaceAll('\n', ' '))}
+            </li>
+          )
+        }
+      )}
+      </ul>
+    );
+  }
 
   return (<>
     <div className={`${loading? 'animate-pulse' : ''} h-full flex flex-col md:flex-row md:gap-3`}>
@@ -86,19 +106,7 @@ function Transcription() {
         </div>
       </div>
       <article className={`${showOrHiddenForTranscript} md:block w-full md:w-1/2 overflow-auto pb-4 px-4 md:p-0`}>
-        <ul className="space-y-2">
-        { parse(content) }
-        { transcripts.map((transcript, index) => {
-            const isMe = isCurrentLine(transcript, index);
-            const className = isMe ? 'bg-yellow-100' : '';
-            return(
-              <li key={transcript.offset} className={className} ref={isMe ? saveHTMLElementToState : null}>
-                <span onClick={() => {player.current?.seekTo(transcript.offset/1000); setIsPlaying(true);}} className="cursor-pointer pr-2">▶</span>
-                {parse(transcript.text.replaceAll('\n', ' '))}
-              </li>)
-          }
-        )}
-        </ul>
+        <TranscriptArea />
       </article>
     </div>
     <div className='fixed w-8 right-4 top-1/2'>

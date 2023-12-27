@@ -2,9 +2,7 @@ import Transcript from "models/transcript";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useIsVisible } from "../useIsVisible";
 
-export default function useDynamicTranscript(startSecond: number, isPlaying: boolean) {
-  const [currentSecond, setCurrentSecond] = useState(0);
-
+export default function useDynamicTranscript(startSecond: number, currentSecond: number, isPlaying: boolean) {
   const [currentLine, setCurrentLine] = useState<HTMLLIElement>();
   const saveHTMLElementToState = useCallback((node: HTMLLIElement) => {
     setCurrentLine(node);
@@ -25,7 +23,6 @@ export default function useDynamicTranscript(startSecond: number, isPlaying: boo
   }, [currentLine, isVisible]);
 
   return {
-    setCurrentSecond,
     isCurrentLine,
     saveHTMLElementToState,
   }
