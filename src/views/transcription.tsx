@@ -8,6 +8,8 @@ import ReactPlayer from 'react-player/youtube'
 import useTranscription from "models/hooks/transcription/useTranscription";
 import useIsPlaying from "models/hooks/transcription/useIsPlaying";
 import useDynamicTranscript from "models/hooks/transcription/useDynamicTranscript";
+import pause from 'assets/icons/pause.png';
+import play from 'assets/icons/play.png';
 
 function Transcription() {
   const { transcriptionId = '0' } = useParams();
@@ -109,9 +111,12 @@ function Transcription() {
         <TranscriptArea />
       </article>
     </div>
-    <div className='fixed w-8 right-4 top-1/2'>
+    <div className='fixed w-8 right-4 top-1/2 space-y-2'>
       <button className={`w-10 h-10 rounded-full shadow-lg bg-stone-200 hover:border hover:border-stone-500 disabled:opacity-80 disabled:border-none`} onClick={saveButton} disabled={saving}>
         <img className='m-auto' src={add} alt=''/>
+      </button>
+      <button className={`md:hidden w-10 h-10 rounded-full shadow-lg bg-stone-200 hover:border hover:border-stone-500 disabled:opacity-80 disabled:border-none`} onClick={() => setIsPlaying(!isPlaying)}>
+        <img className='m-auto' src={isPlaying ? pause : play} alt=''/>
       </button>
     </div>
   </>);
