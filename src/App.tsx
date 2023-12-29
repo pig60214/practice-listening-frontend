@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import apis from '@/apis';
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ITranscription } from '@/models/transcription';
 import add from '@/assets/icons/add.png';
 
@@ -30,7 +30,6 @@ const getVideoId = (youtubeUrl: string): string => {
 function App() {
   const [loading, setLoading] = useState(true);
   const [transcriptions, setTranscriptions] = useState<ITranscription[]>([]);
-  const navigate = useNavigate();
   useEffect(() => {
     const getTranscriptions = async () => {
       const t = (await apis.getTranscriptions()).data;
@@ -66,9 +65,11 @@ function App() {
         </li>)) }
     </ul>
     <div className='fixed w-8 right-4 top-1/2'>
-      <button className={`w-10 h-10 rounded-full shadow-lg bg-stone-200 hover:border hover:border-stone-500 disabled:opacity-80 disabled:border-none`} onClick={() => navigate('add-transcription')}>
-        <img className='m-auto' src={add} alt=''/>
-      </button>
+      <Link to={'add-transcription'}>
+        <button className={`w-10 h-10 rounded-full shadow-lg bg-stone-200 hover:border hover:border-stone-500 disabled:opacity-80 disabled:border-none`}>
+          <img className='m-auto' src={add} alt=''/>
+        </button>
+      </Link>
     </div>
     </>
   );
