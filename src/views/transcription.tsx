@@ -1,15 +1,15 @@
 import { useParams } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
-import apis from "../apis";
-import IWord from "../models/word";
+import apis from "@/apis";
+import IWord from "@/models/word";
 import parse from 'html-react-parser';
-import add from 'assets/icons/add.png';
+import add from '@/assets/icons/add.png';
 import ReactPlayer from 'react-player/youtube'
-import useTranscription from "models/hooks/transcription/useTranscription";
-import useIsPlaying from "models/hooks/transcription/useIsPlaying";
-import useDynamicTranscript from "models/hooks/transcription/useDynamicTranscript";
-import pause from 'assets/icons/pause.png';
-import play from 'assets/icons/play.png';
+import useTranscription from "@/models/hooks/transcription/useTranscription";
+import useIsPlaying from "@/models/hooks/transcription/useIsPlaying";
+import useDynamicTranscript from "@/models/hooks/transcription/useDynamicTranscript";
+import pause from '@/assets/icons/pause.png';
+import play from '@/assets/icons/play.png';
 
 function Transcription() {
   const { transcriptionId = '0' } = useParams();

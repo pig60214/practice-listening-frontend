@@ -1,12 +1,12 @@
 import axios from "axios";
-import { IAddTranscription, ITranscription, IUpdateTranscription } from "./models/transcription";
-import ApiResponse from "./models/apiResponse";
-import IWord from "./models/word";
-import FetchYoutubeTranscriptionRequest from "models/fetchYoutubeTranscriptionRequest";
-import YoutubeInfo from "models/youtubeInfo";
+import { IAddTranscription, ITranscription, IUpdateTranscription } from "@/models/transcription";
+import ApiResponse from "@/models/apiResponse";
+import IWord from "@/models/word";
+import FetchYoutubeTranscriptionRequest from "@/models/fetchYoutubeTranscriptionRequest";
+import YoutubeInfo from "@/models/youtubeInfo";
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_END_POINT,
+  baseURL: import.meta.env.VITE_APP_API_END_POINT,
   headers: {
     'Content-Type': 'application/json',
   },

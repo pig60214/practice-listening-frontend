@@ -1,7 +1,7 @@
-import apis from "apis";
-import Transcript from "models/transcript";
-import { ITranscription } from "models/transcription";
-import IWord from "models/word";
+import apis from "@/apis";
+import Transcript from "@/models/transcript";
+import { ITranscription } from "@/models/transcription";
+import IWord from "@/models/word";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export default function useTranscription(transcriptionId: string) {

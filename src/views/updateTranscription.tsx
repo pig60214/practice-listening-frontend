@@ -1,6 +1,6 @@
-import apis from "apis";
-import FetchYoutubeTranscriptionRequest from "models/fetchYoutubeTranscriptionRequest";
-import { IUpdateTranscription } from "models/transcription";
+import apis from "@/apis";
+import FetchYoutubeTranscriptionRequest from "@/models/fetchYoutubeTranscriptionRequest";
+import { IUpdateTranscription } from "@/models/transcription";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 

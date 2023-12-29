@@ -1,6 +1,6 @@
-import Transcript from "models/transcript";
+import Transcript from "@/models/transcript";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useIsVisible } from "../useIsVisible";
+import { useIsVisible } from "@/models/hooks/useIsVisible";
 
 export default function useDynamicTranscript(startSecond: number, currentSecond: number, isPlaying: boolean) {
   const [currentLine, setCurrentLine] = useState<HTMLLIElement>();

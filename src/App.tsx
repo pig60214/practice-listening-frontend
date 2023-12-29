@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import apis from './apis';
+import apis from '@/apis';
 import { Link, useNavigate } from "react-router-dom";
-import { ITranscription } from './models/transcription';
-import add from 'assets/icons/add.png';
+import { ITranscription } from '@/models/transcription';
+import add from '@/assets/icons/add.png';
 
 interface VideoImageProps {
   youtubeUrl: string,

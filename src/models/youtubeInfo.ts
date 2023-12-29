@@ -1,4 +1,4 @@
-import Transcript from "models/transcript";
+import Transcript from "@/models/transcript";
 
 export default interface YoutubeInfo {
   title: string,
