@@ -3,7 +3,7 @@ import Transcription from "@/views/transcription";
 import App from "@/App";
 import UpdateTranscription from "@/views/updateTranscription";
 
-const router = createBrowserRouter([
+const routes = [
   {
     path: "/",
     element: <App />,
@@ -17,6 +17,9 @@ const router = createBrowserRouter([
     path: "/update-transcription/:transcriptionId",
     element: <UpdateTranscription />,
   },
-]);
+];
+
+const router = createBrowserRouter(routes);
 
 export default router;
+export { routes }

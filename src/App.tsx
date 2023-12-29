@@ -67,7 +67,7 @@ function App() {
     <div className='fixed w-8 right-4 top-1/2'>
       <Link to={'add-transcription'}>
         <button className={`w-10 h-10 rounded-full shadow-lg bg-stone-200 hover:border hover:border-stone-500 disabled:opacity-80 disabled:border-none`}>
-          <img className='m-auto' src={add} alt=''/>
+          <img className='m-auto' src={add} alt='add' />
         </button>
       </Link>
     </div>
