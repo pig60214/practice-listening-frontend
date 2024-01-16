@@ -1,7 +1,7 @@
 import apis from "@/apis";
 import FetchYoutubeTranscriptionRequest from "@/models/fetchYoutubeTranscriptionRequest";
 import { IUpdateTranscription } from "@/models/transcription";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 
 export default function UpdateTranscription() {
@@ -34,10 +34,12 @@ export default function UpdateTranscription() {
     setIsSaving(false);
   }
   const [isRetreving, setisRetreving] = useState(false);
+  const lang = useRef('en');
   const fetchYoutubeTranscription =async () => {
     setisRetreving(true);
     const request: FetchYoutubeTranscriptionRequest = {
       youtubeUrl: transcription.youtubeUrl,
+      lang: lang.current,
     }
     const result = await apis.fetchYoutubeTranscription(request);
     setTranscription({...transcription, title: result.data.title, content: JSON.stringify(result.data.transcript)});
@@ -48,6 +50,12 @@ export default function UpdateTranscription() {
     <div className="grid gap-2 justify-items-stretch max-w-3xl mt-4 md:mt-0 mx-4 md:mx-auto">
       <div className="flex gap-2">
       <input className="grow textbox" value={transcription.youtubeUrl} onChange={(e) => setTranscription({...transcription, youtubeUrl: e.target.value})} placeholder="Youtube Url" />
+      <select onChange={(e) => lang.current = e.target.value}>
+        <option value="en">English</option>
+        <option value="ja">Japanese</option>
+        <option value="ko">Korean</option>
+        <option value="es-ES">Spanish</option>
+      </select>
       <button className="button secondary md:w-fit justify-self-center" onClick={fetchYoutubeTranscription} disabled={isRetreving}>Retrieve</button>
       </div>
       <input className="textbox" value={transcription.title} onChange={(e) => setTranscription({...transcription, title: e.target.value})} placeholder="Title" />
