@@ -56,6 +56,10 @@ function Transcription() {
   }, [saveButton]);
 
   const player = useRef<ReactPlayer>(null);
+  const seekTo = (offset: number) => {
+    player.current?.seekTo(offset/1000, 'seconds');
+    setIsPlaying(true);
+  }
   const { isPlaying, setIsPlaying } = useIsPlaying();
   const [currentSecond, setCurrentSecond] = useState(0);
 
@@ -74,7 +78,7 @@ function Transcription() {
           const className = isMe ? 'bg-yellow-100' : '';
           return(
             <li key={transcript.offset} className={className} ref={isMe ? saveHTMLElementToState : null}>
-              <span onClick={() => {player.current?.seekTo(transcript.offset/1000); setIsPlaying(true);}} className="cursor-pointer pr-2">▶</span>
+              <span onClick={() => {seekTo(transcript.offset);}} className="cursor-pointer pr-2">▶</span>
               {parse(transcript.text.replaceAll('\n', ' '))}
             </li>
           )
@@ -106,8 +110,7 @@ function Transcription() {
             { vocabulary.map(word => {
               const goto = () => {
                 if(word.videoOffset) {
-                  player.current?.seekTo(word.videoOffset/1000);
-                  setIsPlaying(true);
+                  seekTo(word.videoOffset);
                 }
               }
               return <li key={word.id}>
