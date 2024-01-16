@@ -21,6 +21,7 @@ export default function useTranscription(transcriptionId: string) {
       const lines: Transcript[] = JSON.parse(transcription.current.content);
       if (lines.length > 0) {
         lines.forEach(line => {
+          line.text = line.text.replaceAll('\n', ' ')
           v.filter(word => word.videoOffset === undefined).forEach(word => {
             if(line.text.indexOf(word.word) > -1) {
               line.text = line.text.replace(word.word, `<span class='bg-yellow-200 rounded-md py-1'>${word.word}</span>`);

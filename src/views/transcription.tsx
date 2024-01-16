@@ -79,7 +79,7 @@ function Transcription() {
           return(
             <li key={transcript.offset} className={className} ref={isMe ? saveHTMLElementToState : null}>
               <span onClick={() => {seekTo(transcript.offset);}} className="cursor-pointer pr-2">▶</span>
-              {parse(transcript.text.replaceAll('\n', ' '))}
+              {parse(transcript.text)}
             </li>
           )
         }
