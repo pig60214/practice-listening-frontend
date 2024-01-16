@@ -103,7 +103,18 @@ function Transcription() {
         <div className="mx-4 px-2 py-1 md:hidden text-center bg-stone-200" onClick={() => setShowVocabularyInMobile(!showVocabularyInMobile)}>{showOrHiddenBtnText}</div>
         <div className={`${showOrHidden} md:block / mb-4 md:mb-0 mx-4 md:mx-0 px-2 py-1 / grow h-0 overflow-auto / bg-stone-200`}>
           <ul className='space-y-1'>
-            { vocabulary.map(word => <li key={word.id}>{ word.word }</li>) }
+            { vocabulary.map(word => {
+              const goto = () => {
+                if(word.videoOffset) {
+                  player.current?.seekTo(word.videoOffset/1000);
+                  setIsPlaying(true);
+                }
+              }
+              return <li key={word.id}>
+                  <span onClick={goto} className={`pr-2 ${word.videoOffset ? 'cursor-pointer' : 'opacity-20'}`}>▶</span>
+                  { word.word }
+                </li>
+            }) }
           </ul>
         </div>
       </div>

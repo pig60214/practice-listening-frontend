@@ -17,17 +17,25 @@ export default function useTranscription(transcriptionId: string) {
   const getVocabulary = useCallback(async () => {
     const v = (await apis.getVocabularyByTranscriptionId(Number(transcriptionId))).data;
     setVocabulary(v);
-    let contentWithMark = transcription.current.content;
-    v.forEach(word => {
-      contentWithMark = contentWithMark.replace(word.word, `<span class='bg-yellow-200 rounded-md py-1'>${word.word}</span>`)
-    });
     try {
-      const result: Transcript[] = JSON.parse(contentWithMark);
-      if (result.length > 0) {
-        setTranscripts(result);
-        startSecond.current = result[0].offset / 1000;
+      const lines: Transcript[] = JSON.parse(transcription.current.content);
+      if (lines.length > 0) {
+        lines.forEach(line => {
+          v.filter(word => word.videoOffset === undefined).forEach(word => {
+            if(line.text.indexOf(word.word) > -1) {
+              line.text = line.text.replace(word.word, `<span class='bg-yellow-200 rounded-md py-1'>${word.word}</span>`);
+              word.videoOffset = line.offset;
+            }
+          })
+        });
+        setTranscripts(lines);
+        startSecond.current = lines[0].offset / 1000;
       }
     } catch (e) {
+      let contentWithMark = transcription.current.content;
+      v.forEach(word => {
+        contentWithMark = contentWithMark.replace(word.word, `<span class='bg-yellow-200 rounded-md py-1'>${word.word}</span>`)
+      });
       setContent(contentWithMark.replaceAll('\n', '<br />'));
     }
     setLoading(false);
