@@ -15,21 +15,7 @@ function Transcription() {
   const { transcriptionId = '0' } = useParams();
   const { vocabulary, transcripts, content, loading, title, youtubeUrl, startSecond, getVocabulary } = useTranscription(transcriptionId);
   const highlightedText = useRef<string>('');
-
-  useEffect(() => {
-    const saveSelection = () => {
-      const selection = window.getSelection()?.toString();
-      if (selection) {
-        highlightedText.current = selection;
-      }
-    };
-    document.addEventListener('mouseup', saveSelection);
-    document.addEventListener('touchend', saveSelection);
-    return () => {
-      document.removeEventListener('mouseup', saveSelection);
-      document.removeEventListener('touchend', saveSelection);
-    }
-  }, []);
+  const videoOffsetOfHighlightedText = useRef(0);
 
   const [saving, setSaving] = useState(false);
   const saveButton = useCallback(async () => {
@@ -39,6 +25,7 @@ function Transcription() {
       id: 0,
       transcriptionId: Number(transcriptionId),
       word: highlightedText.current,
+      videoOffset: videoOffsetOfHighlightedText.current,
     }
     await apis.addWord(word);
     await getVocabulary();
@@ -76,10 +63,17 @@ function Transcription() {
       { transcripts.map((transcript, index) => {
           const isMe = isCurrentLine(transcript, index);
           const className = isMe ? 'bg-yellow-100' : '';
+          const saveSelection = () => {
+            const selection = window.getSelection()?.toString();
+            if (selection) {
+              highlightedText.current = selection;
+              videoOffsetOfHighlightedText.current = transcript.offset;
+            }
+          }
           return(
             <li key={transcript.offset} className={className} ref={isMe ? saveHTMLElementToState : null}>
               <span onClick={() => {seekTo(transcript.offset);}} className="cursor-pointer pr-2">▶</span>
-              {parse(transcript.text)}
+              <span onMouseUp={saveSelection} onTouchEnd={saveSelection}>{parse(transcript.text)}</span>
             </li>
           )
         }
@@ -114,7 +108,7 @@ function Transcription() {
                 }
               }
               return <li key={word.id}>
-                  <span onClick={goto} className={`pr-2 ${word.videoOffset ? 'cursor-pointer' : 'opacity-20'}`}>▶</span>
+                  <span onClick={goto} className={`pr-2 ${word.videoOffset >= 0 ? 'cursor-pointer' : 'opacity-20'}`}>▶</span>
                   { word.word }
                 </li>
             }) }

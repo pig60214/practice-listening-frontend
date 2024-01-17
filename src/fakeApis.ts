@@ -44,12 +44,14 @@ const fakeApis = {
         {
           "id": 16,
           "transcriptionId": 2,
-          "word": "urine"
+          "word": "urine",
+          "videoOffset": 123,
         },
         {
           "id": 18,
           "transcriptionId": 2,
-          "word": "pint"
+          "word": "pint",
+          "videoOffset": 123,
         }
       ]
     };
