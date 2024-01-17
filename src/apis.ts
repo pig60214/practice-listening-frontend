@@ -33,6 +33,10 @@ const apis = {
     const result = (await api.post(`/vocabulary/update`, word)).data;
     return result;
   },
+  async deleteWord(wordId: number): Promise<ApiResponse> {
+    const result = (await api.delete(`/vocabulary/delete/${wordId}`)).data;
+    return result;
+  },
   async addTranscription(transcription: IAddTranscription): Promise<ApiResponse> {
     const result = (await api.post(`/transcription/add`, transcription)).data;
     return result;

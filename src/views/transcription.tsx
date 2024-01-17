@@ -11,6 +11,10 @@ import useDynamicTranscript from "@/models/hooks/transcription/useDynamicTranscr
 import pause from '@/assets/icons/pause.png';
 import play from '@/assets/icons/play.png';
 
+interface ActionMenuProps {
+  wordId: number,
+}
+
 function Transcription() {
   const { transcriptionId = '0' } = useParams();
   const { vocabulary, transcripts, content, loading, title, youtubeUrl, startSecond, getVocabulary } = useTranscription(transcriptionId);
@@ -82,6 +86,28 @@ function Transcription() {
     );
   }
 
+  function ActionMenu(props: ActionMenuProps) {
+    const [isShow, setIsShow] = useState(false);
+    const display = isShow ? 'block' : 'hidden';
+    const width = isShow ? 'w-20' : '';
+    const showMenu = () => setIsShow(true);
+    const hideMenu = () => setIsShow(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const deleteWord = async () => {
+      setIsDeleting(true);
+      await apis.deleteWord(props.wordId);
+      await getVocabulary();
+      setIsDeleting(false);
+    }
+    return <span className={`cursor-pointer font-medium relative ${width}`} onMouseLeave={hideMenu}>
+        <div className="w-full flex justify-end"><span onClick={showMenu} className="opacity-30 hover:opacity-100">...</span></div>
+        <div className={`${display} bg-stone-400 absolute z-10 right-0 p-1 rounded ${width} text-center`} onClick={deleteWord}>
+          {!isDeleting && <span>DELETE</span>}
+          {isDeleting && <span className="animate-pulse">•••</span>}
+        </div>
+      </span>;
+  }
+
   return (<>
     <div className={`${loading? 'animate-pulse' : ''} h-full flex flex-col md:flex-row md:gap-3`}>
       <div className="w-full h-full md:w-1/2 flex flex-col">
@@ -99,7 +125,7 @@ function Transcription() {
         </div>
         <h1 className="px-4 md:px-0 md:text-lg font-semibold md:font-bold my-1 truncate">{title}</h1>
         <div className="mx-4 px-2 py-1 md:hidden text-center bg-stone-200" onClick={() => setShowVocabularyInMobile(!showVocabularyInMobile)}>{showOrHiddenBtnText}</div>
-        <div className={`${showOrHidden} md:block / mb-4 md:mb-0 mx-4 md:mx-0 px-2 py-1 / grow h-0 overflow-auto / bg-stone-200`}>
+        <div className={`${showOrHidden} md:block / mb-4 md:mb-0 mx-4 md:mx-0 py-1 / grow h-0 overflow-auto / bg-stone-200`}>
           <ul className='space-y-1'>
             { vocabulary.map(word => {
               const goto = () => {
@@ -107,9 +133,10 @@ function Transcription() {
                   seekTo(word.videoOffset);
                 }
               }
-              return <li key={word.id}>
+              return <li key={word.id} className="flex px-2 hover:bg-stone-300">
                   <span onClick={goto} className={`pr-2 ${word.videoOffset >= 0 ? 'cursor-pointer' : 'opacity-20'}`}>▶</span>
-                  { word.word }
+                  <span className="grow">{ word.word }</span>
+                  <ActionMenu wordId={word.id} />
                 </li>
             }) }
           </ul>
@@ -119,7 +146,9 @@ function Transcription() {
         <TranscriptArea />
       </article>
     </div>
-    <div className='fixed w-8 right-4 top-1/2 space-y-2'>
+    {
+      !showVocabularyInMobile &&
+      <div className='fixed w-8 right-4 top-1/2 space-y-2'>
       <button className={`w-10 h-10 rounded-full shadow-lg bg-stone-200 hover:border hover:border-stone-500 disabled:opacity-80 disabled:border-none`} onClick={saveButton} disabled={saving}>
         <img className='m-auto' src={add} alt=''/>
       </button>
@@ -127,6 +156,7 @@ function Transcription() {
         <img className='m-auto' src={isPlaying ? pause : play} alt=''/>
       </button>
     </div>
+    }
   </>);
 }
 
